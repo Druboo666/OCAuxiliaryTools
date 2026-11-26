@@ -17,6 +17,8 @@
 
 // OpenCore builds are fetched from here (tags look like "1.0.9_ebea8248",
 // assets like "OpenCore-Mod-1.0.9-RELEASE.zip").
+// App updates come from this fork, since it carries the OpenCore Mod changes.
+#define APP_REPO "Druboo666/OCAuxiliaryTools"
 #define OC_REPO_URL "https://github.com/daliansky/OpenCore_Patch_Build"
 // Release tag of the OpenCore build shipped in Database/.
 #define OC_BUNDLED_TAG "1.0.9_ebea8248"

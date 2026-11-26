@@ -5991,9 +5991,8 @@ void MainWindow::on_table_Booter_patch_currentCellChanged(int currentRow,
 
 void MainWindow::on_btnCheckUpdate() {
   QNetworkRequest quest;
-  quest.setUrl(QUrl("https://api.github.com/repos/YBronst/" + strAppName +
-                    "/releases/"
-                    "latest"));
+  quest.setUrl(QUrl("https://api.github.com/repos/" + QString(APP_REPO) +
+                    "/releases/latest"));
   quest.setHeader(QNetworkRequest::UserAgentHeader, "RT-Thread ART");
   manager->get(quest);
 }
@@ -9533,7 +9532,7 @@ void MainWindow::on_btnDown_UEFI_Drivers_clicked() {
 
 void MainWindow::on_actionLatest_Release_triggered() {
   QUrl url(
-      QString("https://github.com/YBronst/OCAuxiliaryTools/releases/latest"));
+      QString("https://github.com/") + APP_REPO + "/releases/latest");
   QDesktopServices::openUrl(url);
 }
 
