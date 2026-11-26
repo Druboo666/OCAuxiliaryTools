@@ -6,7 +6,6 @@
 #include "ui_syncocdialog.h"
 
 extern MainWindow* mw_one;
-extern QString ocVerPrefix;
 extern QString ocVer, ocVerDev, ocFrom, ocFromDev, strIniFile, strAppName,
     SaveFileName, strAppExePath, strOCFrom;
 extern bool blDEV;
@@ -740,7 +739,7 @@ void SyncOCDialog::init_Sync_OC_Table() {
 
   if (!blDEV) {
     ui->lblOCFrom->setText(ocFrom);
-    setWindowTitle(tr("Sync OC") + " -> " + ocVerPrefix + ocVer);
+    setWindowTitle(tr("Sync OC") + " -> " + ocShowVer(ocVer));
   } else {
     ui->lblOCFrom->setText(ocFromDev);
     setWindowTitle(tr("Sync OC") + " -> " + ocVerDev);
@@ -912,6 +911,7 @@ void SyncOCDialog::on_btnImport_clicked() {
     QFileInfo fi(FileName);
     QString tar = path + fi.fileName();
     mw_one->copyFileToPath(FileName, tar, true);
+    mymethod->lastDLUrl = "";  // local zip, release tag unknown
     isCheckOC = true;
     mymethod->unZip(fi.fileName());
     isCheckOC = false;

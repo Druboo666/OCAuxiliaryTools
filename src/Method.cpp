@@ -11,7 +11,7 @@
 
 extern MainWindow* mw_one;
 extern QString SaveFileName, strIniFile, strAppName, strAppExePath;
-extern QString ocVerPrefix;
+extern QString ocVerPrefix, ocVerBuild;
 extern QString CurVerison, ocVer, ocVerDev, ocFrom, ocFromDev, strOCFrom,
     strOCFromDev;
 extern bool blDEV;
@@ -410,6 +410,7 @@ void Method::startDownload(QString strUrl) {
   if (blBreak) return;
   QString strTokyo, strSeoul, strOriginal, strSet, strTemp, strUrlOrg;
   strUrlOrg = strUrl;
+  lastDLUrl = strUrl;
   strOriginal = "https://github.com/";
   strTokyo = "https://download.fastgit.org/";
   strSeoul = "https://ghproxy.com/https://github.com/";
@@ -691,6 +692,15 @@ void Method::updateOpenCore() {
         bool isMod = filename.startsWith("OpenCore-Mod-");
         Reg.setValue("ocMod", isMod);
         ocVerPrefix = isMod ? "Mod " : "";
+
+        // Keep the build part of the release tag (1.0.9_ebea8248) so the
+        // exact build can be told apart; it's in the download URL.
+        QString tag = lastDLUrl.section("/releases/download/", 1).section("/", 0, 0);
+        QString base = ver.section(" ", 0, 0);
+        ocVerBuild = "";
+        if (isMod && !base.isEmpty() && tag.startsWith(base + "_"))
+          ocVerBuild = tag.mid(base.length());
+        Reg.setValue("ocBuild", ocVerBuild);
         if (mw_one->dlgSyncOC->ui->comboOCVersions->currentIndex() == 0) {
           Reg.setValue("maxVer", ver);
         }

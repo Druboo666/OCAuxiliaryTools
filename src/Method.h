@@ -18,6 +18,11 @@
 // OpenCore builds are fetched from here (tags look like "1.0.9_ebea8248",
 // assets like "OpenCore-Mod-1.0.9-RELEASE.zip").
 #define OC_REPO_URL "https://github.com/daliansky/OpenCore_Patch_Build"
+// Release tag of the OpenCore build shipped in Database/.
+#define OC_BUNDLED_TAG "1.0.9_ebea8248"
+
+// OpenCore version as shown in the UI, e.g. "Mod 1.0.9_ebea8248 DEBUG".
+QString ocShowVer(QString ver);
 
 class Method : public QMainWindow {
   Q_OBJECT
@@ -32,6 +37,7 @@ class Method : public QMainWindow {
   bool dlEnd = false;
   QString tempDir;
   QString filename;
+  QString lastDLUrl;
   QString strMountedEFI;
   QNetworkAccessManager *manager;
   QNetworkAccessManager *managerDownLoad;

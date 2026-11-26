@@ -13,6 +13,14 @@ QString ocVerDev = "1.0.6";
 QString ocFrom, ocFromDev, strOCFrom, strOCFromDev;
 // "Mod " when the current database came from a daliansky OpenCore-Mod build.
 QString ocVerPrefix;
+// Build part of the Mod release tag, e.g. "_ebea8248".
+QString ocVerBuild;
+
+QString ocShowVer(QString ver) {
+  QStringList parts = ver.split(" ");
+  parts[0] += ocVerBuild;
+  return ocVerPrefix + parts.join(" ");
+}
 bool blDEV = false;
 
 aboutDialog::aboutDialog(QWidget* parent)
@@ -34,6 +42,8 @@ aboutDialog::aboutDialog(QWidget* parent)
   }
   // No saved version means the bundled database is in use, which is Mod.
   ocVerPrefix = Reg.value("ocMod", ver == "").toBool() ? "Mod " : "";
+  QString bundledBuild = QString(OC_BUNDLED_TAG).section("_", 1);
+  ocVerBuild = Reg.value("ocBuild", ver == "" ? "_" + bundledBuild : "").toString();
   ver = Reg.value("ocVerDev").toString();
   if (ver > ocVerDev) {
     ocVerDev = ver;
@@ -64,7 +74,7 @@ aboutDialog::aboutDialog(QWidget* parent)
 
   if (!blDEV)
     ui->lblVersion->setText(tr("Version") + "  " + CurVersion +
-                            " for OpenCore " + ocVerPrefix + ocVer);
+                            " for OpenCore " + ocShowVer(ocVer));
   else
     ui->lblVersion->setText(tr("Version") + "  " + CurVersion +
                             " for OpenCore " + ocVerDev);

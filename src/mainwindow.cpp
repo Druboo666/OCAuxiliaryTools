@@ -33,7 +33,7 @@ bool Initialization = false;
 int red = 0;
 
 extern QString CurVersion, ocVer, ocVerDev, ocFrom, ocFromDev, strOCFrom,
-    strACPI, strKexts, strDrivers, strTools, strOCFromDev, ocVerPrefix;
+    strACPI, strKexts, strDrivers, strTools, strOCFromDev, ocVerBuild;
 extern bool blDEV;
 extern QWidgetList listOCATWidgetHideList, listOCATWidgetDelList;
 extern QStringList boolTypeList, intTypeList, dataTypeList, listKey, listType,
@@ -49,9 +49,9 @@ void MainWindow::changeOpenCore(bool blDEV) {
     if (!ui->actionDEBUG->isChecked()) {
       pathSource = userDataBaseDir;
       ocVer = ocVer.replace(" " + tr("DEBUG"), "");
-      lblVer->setText("  OpenCore " + ocVerPrefix + ocVer);
+      lblVer->setText("  OpenCore " + ocShowVer(ocVer));
       aboutDlg->ui->lblVersion->setText(tr("Version") + "  " + CurVersion +
-                                        " for OpenCore " + ocVerPrefix + ocVer);
+                                        " for OpenCore " + ocShowVer(ocVer));
 
     } else {
       pathSource = userDataBaseDir + "DEBUG/";
@@ -63,14 +63,17 @@ void MainWindow::changeOpenCore(bool blDEV) {
       }
       ocVer = ocVer.replace(" " + tr("DEBUG"), "");
       ocVer = ocVer + " " + tr("DEBUG");
-      lblVer->setText("  OpenCore " + ocVerPrefix + ocVer);
+      lblVer->setText("  OpenCore " + ocShowVer(ocVer));
       aboutDlg->ui->lblVersion->setText(tr("Version") + "  " + CurVersion +
-                                        " for OpenCore " + ocVerPrefix + ocVer);
+                                        " for OpenCore " + ocShowVer(ocVer));
     }
 
     QString str1 = ocVer;
-    strOCFrom = QString(OC_REPO_URL) + "/releases?q=" +
-                str1.replace(" " + tr("DEBUG"), "") + "&expanded=true";
+    str1.replace(" " + tr("DEBUG"), "");
+    if (ocVerBuild != "")
+      strOCFrom = QString(OC_REPO_URL) + "/releases/tag/" + str1 + ocVerBuild;
+    else
+      strOCFrom = QString(OC_REPO_URL) + "/releases?q=" + str1 + "&expanded=true";
 
   } else {  // blDEV
     dataBaseDir = strAppExePath + "/Database/";
