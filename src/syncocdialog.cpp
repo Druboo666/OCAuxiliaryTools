@@ -9,6 +9,7 @@ extern MainWindow* mw_one;
 extern QString ocVer, ocVerDev, ocFrom, ocFromDev, strIniFile, strAppName,
     SaveFileName, strAppExePath, strOCFrom;
 extern bool blDEV;
+extern QString ocVerBuild;
 extern bool Initialization;
 extern Method* mymethod;
 extern int red;
@@ -75,6 +76,8 @@ SyncOCDialog::SyncOCDialog(QWidget* parent)
           .toString());
   ui->chkIncludeResource->setChecked(Reg.value("IncludeResource", 1).toBool());
   ui->chkKextsDev->setChecked(Reg.value("KextsDev", 0).toBool());
+
+  fetchOCTags();
 
   mgr = new QNetworkAccessManager(this);
   connect(mgr, SIGNAL(finished(QNetworkReply*)), this,
@@ -521,6 +524,9 @@ void SyncOCDialog::init_Sync_OC_Table() {
     ui->editOCDevSource->setHidden(true);
     ui->btnImport->setHidden(true);
 
+    if (!ocTags.isEmpty()) {
+      fillOCVersionsFromTags();
+    } else {
     QString strDev = Reg.value("maxVer", "1.0.9").toString();
     if (strDev.contains(" ")) strDev = strDev.split(" ").at(0);
     if (strDev > ui->comboOCVersions->itemText(1)) {
@@ -567,6 +573,7 @@ void SyncOCDialog::init_Sync_OC_Table() {
     if (str.contains(" ")) str = str.split(" ").at(0);
 
     ui->comboOCVersions->setCurrentText(str);
+    }
   }
 
   sourceKexts.clear();
@@ -881,8 +888,12 @@ void SyncOCDialog::on_comboOCVersions_currentTextChanged(const QString& arg1) {
   if (arg1 == tr("Latest Version")) {
     strOCFrom = QString(OC_REPO_URL) + "/releases/latest";
   } else {
-    strOCFrom = QString(OC_REPO_URL) + "/releases?q=" + arg1 + "&expanded=true";
-    ui->btnGetOC->setText(tr("Get OpenCore") + "  " + arg1);
+    if (arg1.contains("_"))  // a full release tag
+      strOCFrom = QString(OC_REPO_URL) + "/releases/tag/" + arg1;
+    else
+      strOCFrom =
+          QString(OC_REPO_URL) + "/releases?q=" + arg1 + "&expanded=true";
+    ui->btnGetOC->setText(tr("Get OpenCore Mod") + "  " + arg1);
   }
 
   ocFrom = "<a href=\"" + strOCFrom + "\"" + "> " + tr(" Source ");
@@ -1093,4 +1104,48 @@ void SyncOCDialog::on_btnGetLastOC_clicked() {
   ui->btnGetLastOC->setEnabled(false);
   ui->comboOCVersions->setCurrentIndex(0);
   ui->btnGetOC->click();
+}
+
+void SyncOCDialog::fetchOCTags() {
+  QNetworkAccessManager* nam = new QNetworkAccessManager(this);
+  QString api = QString(OC_REPO_URL)
+                    .replace("https://github.com/",
+                             "https://api.github.com/repos/") +
+                "/releases?per_page=100";
+  QNetworkRequest req((QUrl(api)));
+  req.setHeader(QNetworkRequest::UserAgentHeader, "OCAuxiliaryTools");
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+  req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+#endif
+  QNetworkReply* reply = nam->get(req);
+  connect(reply, &QNetworkReply::finished, this, [=]() {
+    QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+    reply->deleteLater();
+    nam->deleteLater();
+    if (!doc.isArray()) return;  // offline or rate limited: keep numbers
+
+    QStringList tags;
+    QJsonArray arr = doc.array();
+    for (int i = 0; i < arr.count(); i++) {
+      QString tag = arr.at(i).toObject().value("tag_name").toString();
+      if (tag.section("_", 0, 0) >= "1.0.5") tags.append(tag);
+    }
+    if (tags.isEmpty()) return;
+    ocTags = tags;
+    if (!blDEV) fillOCVersionsFromTags();
+  });
+}
+
+void SyncOCDialog::fillOCVersionsFromTags() {
+  QString cur = ui->comboOCVersions->currentText();
+  ui->comboOCVersions->clear();
+  ui->comboOCVersions->addItems(QStringList() << tr("Latest Version")
+                                              << ocTags);
+
+  // Select the build that's in the database now, e.g. 1.0.9_ebea8248.
+  QString installed = ocVer.section(" ", 0, 0) + ocVerBuild;
+  if (ocTags.contains(installed))
+    ui->comboOCVersions->setCurrentText(installed);
+  else if (ocTags.contains(cur))
+    ui->comboOCVersions->setCurrentText(cur);
 }

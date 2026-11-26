@@ -33,6 +33,11 @@ class SyncOCDialog : public QDialog {
   bool dlEnd = true;
   QString bufferJson;
   QString downLink;
+  // Release tags of OpenCore Mod builds (e.g. "1.0.9_ebea8248"), newest
+  // first, fetched from GitHub when the dialog is created.
+  QStringList ocTags;
+  void fetchOCTags();
+  void fillOCVersionsFromTags();
   void writeCheckStateINI();
   bool isCheckOC = false;
   QStringList sourceKexts, targetKexts, sourceOpenCore, targetOpenCore;

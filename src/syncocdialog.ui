@@ -367,7 +367,7 @@
         <item>
          <widget class="QLabel" name="lblOCVersions">
           <property name="text">
-           <string>Choose OpenCore Version</string>
+           <string>Choose OpenCore Mod Version</string>
           </property>
          </widget>
         </item>
@@ -384,7 +384,7 @@
      <item>
       <widget class="QPushButton" name="btnGetLastOC">
        <property name="text">
-        <string>Get the latest version of OpenCore</string>
+        <string>Get the latest version of OpenCore Mod</string>
        </property>
       </widget>
      </item>
