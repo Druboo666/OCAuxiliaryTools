@@ -33,7 +33,7 @@ bool Initialization = false;
 int red = 0;
 
 extern QString CurVersion, ocVer, ocVerDev, ocFrom, ocFromDev, strOCFrom,
-    strACPI, strKexts, strDrivers, strTools, strOCFromDev;
+    strACPI, strKexts, strDrivers, strTools, strOCFromDev, ocVerPrefix;
 extern bool blDEV;
 extern QWidgetList listOCATWidgetHideList, listOCATWidgetDelList;
 extern QStringList boolTypeList, intTypeList, dataTypeList, listKey, listType,
@@ -49,9 +49,9 @@ void MainWindow::changeOpenCore(bool blDEV) {
     if (!ui->actionDEBUG->isChecked()) {
       pathSource = userDataBaseDir;
       ocVer = ocVer.replace(" " + tr("DEBUG"), "");
-      lblVer->setText("  OpenCore " + ocVer);
+      lblVer->setText("  OpenCore " + ocVerPrefix + ocVer);
       aboutDlg->ui->lblVersion->setText(tr("Version") + "  " + CurVersion +
-                                        " for OpenCore " + ocVer);
+                                        " for OpenCore " + ocVerPrefix + ocVer);
 
     } else {
       pathSource = userDataBaseDir + "DEBUG/";
@@ -63,9 +63,9 @@ void MainWindow::changeOpenCore(bool blDEV) {
       }
       ocVer = ocVer.replace(" " + tr("DEBUG"), "");
       ocVer = ocVer + " " + tr("DEBUG");
-      lblVer->setText("  OpenCore " + ocVer);
+      lblVer->setText("  OpenCore " + ocVerPrefix + ocVer);
       aboutDlg->ui->lblVersion->setText(tr("Version") + "  " + CurVersion +
-                                        " for OpenCore " + ocVer);
+                                        " for OpenCore " + ocVerPrefix + ocVer);
     }
 
     QString str1 = ocVer;

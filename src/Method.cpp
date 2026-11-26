@@ -11,6 +11,7 @@
 
 extern MainWindow* mw_one;
 extern QString SaveFileName, strIniFile, strAppName, strAppExePath;
+extern QString ocVerPrefix;
 extern QString CurVerison, ocVer, ocVerDev, ocFrom, ocFromDev, strOCFrom,
     strOCFromDev;
 extern bool blDEV;
@@ -687,6 +688,9 @@ void Method::updateOpenCore() {
       if (!blDEV) {
         Reg.setValue("ocVer", ver);
         ocVer = ver;
+        bool isMod = filename.startsWith("OpenCore-Mod-");
+        Reg.setValue("ocMod", isMod);
+        ocVerPrefix = isMod ? "Mod " : "";
         if (mw_one->dlgSyncOC->ui->comboOCVersions->currentIndex() == 0) {
           Reg.setValue("maxVer", ver);
         }

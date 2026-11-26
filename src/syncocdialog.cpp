@@ -6,6 +6,7 @@
 #include "ui_syncocdialog.h"
 
 extern MainWindow* mw_one;
+extern QString ocVerPrefix;
 extern QString ocVer, ocVerDev, ocFrom, ocFromDev, strIniFile, strAppName,
     SaveFileName, strAppExePath, strOCFrom;
 extern bool blDEV;
@@ -739,7 +740,7 @@ void SyncOCDialog::init_Sync_OC_Table() {
 
   if (!blDEV) {
     ui->lblOCFrom->setText(ocFrom);
-    setWindowTitle(tr("Sync OC") + " -> " + ocVer);
+    setWindowTitle(tr("Sync OC") + " -> " + ocVerPrefix + ocVer);
   } else {
     ui->lblOCFrom->setText(ocFromDev);
     setWindowTitle(tr("Sync OC") + " -> " + ocVerDev);
