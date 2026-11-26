@@ -716,7 +716,7 @@ void Method::updateOpenCore() {
       QMessageBox box;
       if (!blDEV)
         box.setText(tr("OpenCore Database has been successfully updated to") +
-                    "  " + ocVer);
+                    "  OpenCore " + ocShowVer(ocVer));
       else
         box.setText(tr("OpenCore Database has been successfully updated to") +
                     "  " + ocVerDev);
