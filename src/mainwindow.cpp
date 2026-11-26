@@ -68,9 +68,9 @@ void MainWindow::changeOpenCore(bool blDEV) {
                                         " for OpenCore " + ocVer);
     }
 
-    QString str = "https://github.com/acidanthera/OpenCorePkg/releases/tag/";
     QString str1 = ocVer;
-    strOCFrom = str + str1.replace(" " + tr("DEBUG"), "");
+    strOCFrom = QString(OC_REPO_URL) + "/releases?q=" +
+                str1.replace(" " + tr("DEBUG"), "") + "&expanded=true";
 
   } else {  // blDEV
     dataBaseDir = strAppExePath + "/Database/";
@@ -5782,12 +5782,12 @@ QString MainWindow::getDatabaseVer() {
 }
 
 void MainWindow::on_line1() {
-  QUrl url(QString("https://github.com/acidanthera/OpenCorePkg/releases"));
+  QUrl url(QString(OC_REPO_URL) + "/releases");
   QDesktopServices::openUrl(url);
 }
 
 void MainWindow::on_line2() {
-  QUrl url(QString("https://github.com/acidanthera/OpenCorePkg/actions"));
+  QUrl url(QString(OC_REPO_URL) + "/actions");
   QDesktopServices::openUrl(url);
 }
 

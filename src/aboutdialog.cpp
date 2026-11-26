@@ -20,7 +20,7 @@ aboutDialog::aboutDialog(QWidget* parent)
   strOCFromDev =
       "https://github.com/acidanthera/OpenCorePkg/actions/runs/1808597752/";
 
-  strOCFrom = "https://github.com/acidanthera/OpenCorePkg/releases/latest";
+  strOCFrom = QString(OC_REPO_URL) + "/releases/latest";
   ocFrom = "<a href=\"" + strOCFrom + "\"" + "> " + tr(" Source ");
 
   strIniFile =

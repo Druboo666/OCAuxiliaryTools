@@ -863,15 +863,14 @@ void SyncOCDialog::on_btnGetOC_clicked() {
 
   } else {
     if (ui->comboOCVersions->currentText() == tr("Latest Version")) {
-      QString ocUrl = "https://github.com/acidanthera/OpenCorePkg";
+      QString ocUrl = OC_REPO_URL;
       if (mw_one->myDlgPreference->ui->rbtnAPI->isChecked() ||
           mw_one->myDlgPreference->ui->rbtnToken->isChecked())
         mymethod->getLastReleaseFromUrl(ocUrl);
       if (mw_one->myDlgPreference->ui->rbtnWeb->isChecked())
         mymethod->getLastReleaseFromHtml(ocUrl + "/releases");
     } else {
-      progInfo->hide();
-      mymethod->startDownload(downLink);
+      mymethod->getOCReleaseByVersion(ui->comboOCVersions->currentText());
     }
   }
 }
@@ -879,22 +878,10 @@ void SyncOCDialog::on_btnGetOC_clicked() {
 void SyncOCDialog::on_comboOCVersions_currentTextChanged(const QString& arg1) {
   if (Initialization) return;
 
-  QString str = "https://github.com/acidanthera/OpenCorePkg/releases/tag/";
-  QString url = str + arg1;
   if (arg1 == tr("Latest Version")) {
-    url = "https://github.com/acidanthera/OpenCorePkg/releases/latest";
-    strOCFrom = url;
+    strOCFrom = QString(OC_REPO_URL) + "/releases/latest";
   } else {
-    strOCFrom = str + arg1;
-    if (mw_one->ui->actionDEBUG->isChecked())
-      downLink =
-          "https://github.com/acidanthera/OpenCorePkg/releases/download/" +
-          arg1 + "/OpenCore-" + arg1 + "-DEBUG.zip";
-    else
-      downLink =
-          "https://github.com/acidanthera/OpenCorePkg/releases/download/" +
-          arg1 + "/OpenCore-" + arg1 + "-RELEASE.zip";
-
+    strOCFrom = QString(OC_REPO_URL) + "/releases?q=" + arg1 + "&expanded=true";
     ui->btnGetOC->setText(tr("Get OpenCore") + "  " + arg1);
   }
 

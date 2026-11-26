@@ -672,6 +672,7 @@ void Method::updateOpenCore() {
 
     if (isDo) {
       QString file = filename;
+      file.replace("OpenCore-Mod-", "OpenCore-");
       QStringList list = file.split("-");
       QString ver;
 
@@ -778,6 +779,30 @@ void Method::getLastReleaseFromUrl(QString strUrl) {
   manager->get(quest);
 }
 
+// Fetches the newest build of a given OpenCore version, e.g. "1.0.8".
+// Each version has several builds tagged "<ver>_<commit>", so we ask for the
+// release list and let parse_UpdateJSON pick the first (newest) match.
+void Method::getOCReleaseByVersion(QString ver) {
+  if (blBreak) return;
+  wantedOCVer = ver;
+  QString strAPI = QString(OC_REPO_URL)
+                       .replace("https://github.com/",
+                                "https://api.github.com/repos/") +
+                   "/releases?per_page=100";
+  QNetworkRequest quest;
+  quest.setUrl(QUrl(strAPI));
+  quest.setHeader(QNetworkRequest::UserAgentHeader, "RT-Thread ART");
+
+  if (mw_one->myDlgPreference->ui->rbtnToken->isChecked()) {
+    QString strToken = mw_one->myDlgPreference->ui->editToken->text().trimmed();
+    if (strToken != "")
+      quest.setRawHeader("Authorization",
+                         QString("token %1").arg(strToken).toUtf8());
+  }
+
+  manager->get(quest);
+}
+
 void Method::replyFinished(QNetworkReply* reply) {
   QString str = reply->readAll();
   parse_UpdateJSON(str);
@@ -797,8 +822,23 @@ void Method::parse_UpdateJSON(QString str) {
 
   QString Verison;
   QString strDLUrl;
-  if (root_Doc.isObject()) {
-    QJsonObject root_Obj = root_Doc.object();
+  QJsonObject root_Obj;
+  if (root_Doc.isArray()) {
+    // Release list (see getOCReleaseByVersion): newest first.
+    QJsonArray arr = root_Doc.array();
+    for (int i = 0; i < arr.count(); i++) {
+      QJsonObject obj = arr.at(i).toObject();
+      QString tag = obj.value("tag_name").toString();
+      if (tag == wantedOCVer || tag.startsWith(wantedOCVer + "_")) {
+        root_Obj = obj;
+        break;
+      }
+    }
+    wantedOCVer = "";
+  } else if (root_Doc.isObject())
+    root_Obj = root_Doc.object();
+
+  if (!root_Obj.isEmpty()) {
     QVariantList list = root_Obj.value("assets").toArray().toVariantList();
     Verison = root_Obj.value("tag_name").toString();
     QStringList strDownloadUrlList;
