@@ -522,7 +522,7 @@ void SyncOCDialog::init_Sync_OC_Table() {
     ui->editOCDevSource->setHidden(true);
     ui->btnImport->setHidden(true);
 
-    QString strDev = Reg.value("maxVer", "1.0.5").toString();
+    QString strDev = Reg.value("maxVer", "1.0.9").toString();
     if (strDev.contains(" ")) strDev = strDev.split(" ").at(0);
     if (strDev > ui->comboOCVersions->itemText(1)) {
       ui->comboOCVersions->clear();

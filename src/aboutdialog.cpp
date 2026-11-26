@@ -8,7 +8,7 @@
 extern MainWindow* mw_one;
 extern QString strAppName, strIniFile;
 QString CurVersion = "20261118";
-QString ocVer = "1.0.5";
+QString ocVer = "1.0.9";
 QString ocVerDev = "1.0.6";
 QString ocFrom, ocFromDev, strOCFrom, strOCFromDev;
 // "Mod " when the current database came from a daliansky OpenCore-Mod build.
@@ -32,7 +32,8 @@ aboutDialog::aboutDialog(QWidget* parent)
   if (ver != "") {
     ocVer = ver;
   }
-  ocVerPrefix = Reg.value("ocMod", false).toBool() ? "Mod " : "";
+  // No saved version means the bundled database is in use, which is Mod.
+  ocVerPrefix = Reg.value("ocMod", ver == "").toBool() ? "Mod " : "";
   ver = Reg.value("ocVerDev").toString();
   if (ver > ocVerDev) {
     ocVerDev = ver;
